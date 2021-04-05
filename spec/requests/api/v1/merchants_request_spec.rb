@@ -25,7 +25,7 @@ RSpec.describe 'Merchants API' do
     end
   end
 
-  it 'defaults to 20 merchants unless specified' do
+  it 'defaults to 20 merchants per page' do
 
     expect(@merchants.length).to eq(20)
   end
