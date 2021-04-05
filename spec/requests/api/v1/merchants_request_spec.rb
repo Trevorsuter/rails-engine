@@ -9,24 +9,26 @@ RSpec.describe 'Merchants API' do
     @merchants = parsed[:data]
   end
 
-  it 'has a successful response' do
+  describe 'happy path' do
+    it 'has a successful response' do
 
-    expect(response).to be_successful
-  end
-
-  it 'sends the correct data' do
-
-    @merchants.each do |merchant|
-      expect(merchant[:attributes]).to have_key(:name)
-      expect(merchant[:attributes][:name]).to be_a(String)
-
-      expect(merchant[:attributes]).to have_key(:id)
-      expect(merchant[:attributes][:id]).to be_an(Integer)
+      expect(response).to be_successful
     end
-  end
 
-  it 'defaults to 20 merchants per page' do
+    it 'sends the correct data' do
 
-    expect(@merchants.length).to eq(20)
+      @merchants.each do |merchant|
+        expect(merchant[:attributes]).to have_key(:name)
+        expect(merchant[:attributes][:name]).to be_a(String)
+
+        expect(merchant[:attributes]).to have_key(:id)
+        expect(merchant[:attributes][:id]).to be_an(Integer)
+      end
+    end
+
+    it 'defaults to 20 merchants per page' do
+
+      expect(@merchants.length).to eq(20)
+    end
   end
 end
