@@ -34,5 +34,17 @@ RSpec.describe 'Item show API' do
       expect(@item[:attributes]).to have_key(:unit_price)
       expect(@item[:attributes]).to have_key(:merchant_id)
     end
+
+    describe 'merchant' do
+      it 'can get the right merchant' do
+        item_merchant = Item.first.merchant
+        get "/api/v1/items/#{Item.first.id}/merchant"
+        parsed = JSON.parse(response.body, symbolize_names: true)
+        response_merchant = parsed[:data]
+        
+        expect(response_merchant[:id].to_i).to eq(item_merchant.id)
+        expect(response_merchant[:attributes]).to have_key(:name)
+      end
+    end
   end
 end
