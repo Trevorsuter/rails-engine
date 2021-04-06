@@ -19,7 +19,7 @@ RSpec.describe 'merchant request spec' do
 
     it 'has the correct data' do
 
-      expect(@attributes).to have_key(:id)
+      expect(@merchant).to have_key(:id)
       expect(@attributes).to have_key(:name)
     end
   end
