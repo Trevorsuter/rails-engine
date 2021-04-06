@@ -1,37 +1,42 @@
 require 'rails_helper'
 
 RSpec.describe 'Items API' do
+
   before :each do
     4.times { create(:merchant_with_items, items_count: 30) }
-    get '/api/v1/items'
-    parsed = JSON.parse(response.body, symbolize_names: true)
-    @items = parsed[:data]
   end
 
   describe 'happy path' do
-    it 'has a successful response' do
+    describe 'get' do
+      before :each do
+        get '/api/v1/items'
+        parsed = JSON.parse(response.body, symbolize_names: true)
+        @items = parsed[:data]
+      end
+      it 'has a successful response' do
 
-      expect(response).to be_successful
-    end
+        expect(response).to be_successful
+      end
 
-    it 'sends the correct data' do
+      it 'sends the correct data' do
 
-      @items.each do |item|
-        expect(item).to have_key(:id)
-        expect(item).to have_key(:attributes)
-        expect(item[:attributes]).to have_key(:name)
-        expect(item[:attributes]).to have_key(:description)
-        expect(item[:attributes]).to have_key(:unit_price)
-        expect(item[:attributes]).to have_key(:merchant_id)
+        @items.each do |item|
+          expect(item).to have_key(:id)
+          expect(item).to have_key(:attributes)
+          expect(item[:attributes]).to have_key(:name)
+          expect(item[:attributes]).to have_key(:description)
+          expect(item[:attributes]).to have_key(:unit_price)
+          expect(item[:attributes]).to have_key(:merchant_id)
+        end
+      end
+
+      it 'defaults per page to 20' do
+
+        expect(@items.length).to eq(20)
       end
     end
 
-    it 'defaults per page to 20' do
-
-      expect(@items.length).to eq(20)
-    end
-
-    describe 'query params' do
+    describe 'optional query params' do
       it 'can set per page' do
         get '/api/v1/items?per_page=10'
         ten_parsed = JSON.parse(response.body, symbolize_names: true)
@@ -70,6 +75,20 @@ RSpec.describe 'Items API' do
         expect(triple_p_data.first[:id].to_i).to_not eq(last_item.id)
 
         expect(triple_p_data.length).to eq(10)
+      end
+    end
+
+    describe 'post' do
+      it 'can can create a new item' do
+        merchant = Merchant.first
+        post "/api/v1/items", params: {name: "item1", description: "item1 description", unit_price: 10.99, merchant_id: merchant.id}
+        parsed = JSON.parse(response.body, symbolize_names: true)
+        new_item = parsed[:data]
+
+        expect(new_item[:attributes][:name]).to eq("item1")
+        expect(new_item[:attributes][:description]).to eq("item1 description")
+        expect(new_item[:attributes][:unit_price]).to eq("10.99")
+        expect(new_item[:attributes][:merchant_id]).to eq(merchant.id)
       end
     end
   end

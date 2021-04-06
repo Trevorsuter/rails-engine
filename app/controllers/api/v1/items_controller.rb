@@ -10,6 +10,13 @@ class Api::V1::ItemsController < ApplicationController
     render json: @item
   end
 
+  def create
+    @item = Item.new(item_params)
+    if @item.save
+      render json: ItemSerializer.new(@item), status: 201
+    end
+  end
+
   private
 
   def per_page
@@ -22,5 +29,9 @@ class Api::V1::ItemsController < ApplicationController
     else
       0
     end
+  end
+
+  def item_params
+    params.permit(:name, :description, :unit_price, :merchant_id)
   end
 end
