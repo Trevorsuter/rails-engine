@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'merchant request spec' do
+RSpec.describe 'merchant show API' do
   before :each do
     create_list(:merchant, 3)
 
