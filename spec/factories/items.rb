@@ -3,6 +3,6 @@ FactoryBot.define do
     name { "MyString" }
     description { "MyString" }
     unit_price { "9.99" }
-    merchant { nil }
+    association :merchant_id, factory: :merchant
   end
 end
