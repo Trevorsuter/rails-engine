@@ -1,7 +1,7 @@
 class Api::V1::ItemsController < ApplicationController
 
   def index
-    @items = ItemSerializer.new(Item.all.limit(per_page).offset(page))
+    @items = ItemSerializer.new(Item.all_paginated(per_page, page))
     render json: @items
   end
 
@@ -18,7 +18,11 @@ class Api::V1::ItemsController < ApplicationController
   def update
     @item = Item.find(params[:id])
     @item.update_attributes(item_params)
-    render json: ItemSerializer.new(@item)
+    if @item.save
+      render json: ItemSerializer.new(@item)
+    else
+      head :not_found
+    end
   end
 
   def destroy
@@ -27,19 +31,7 @@ class Api::V1::ItemsController < ApplicationController
   end
 
   private
-
-  def per_page
-    params[:per_page] || 20
-  end
-
-  def page
-    if params[:page] && params[:page].to_i > 0
-      (params[:page].to_i - 1) * per_page.to_i
-    else
-      0
-    end
-  end
-
+  
   def item_params
     params.permit(:name, :description, :unit_price, :merchant_id)
   end
