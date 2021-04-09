@@ -25,4 +25,20 @@ RSpec.describe Merchant, type: :model do
       expect(Merchant.find_all_by_name("ring")).to eq(expected)
     end
   end
+
+  describe 'instance methods' do
+
+    it 'total_revenue' do
+      @merchant = create(:merchant)
+      @customer = create(:customer)
+      @item = create(:item, merchant: @merchant, unit_price: 10)
+      @invoices = create_list(:invoice, 10, merchant: @merchant, customer: @customer, status: 'shipped' )
+      @invoices.each do |invoice|
+        create(:invoice_item, invoice: invoice, item: @item, unit_price: @item.unit_price)
+        create(:transaction, invoice: invoice, result: 'success')
+      end
+
+      expect(@merchant.revenue).to eq(100)
+    end
+  end
 end

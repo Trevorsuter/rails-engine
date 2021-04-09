@@ -7,4 +7,12 @@ class Merchant < ApplicationRecord
     where("lower(name) LIKE ?", "%#{name.downcase}%")
     .order(:name)
   end
+
+  def revenue
+    invoice_items.joins(:invoice)
+    .where('invoices.status = ?', 'shipped')
+    .joins(invoice: :transactions)
+    .where('transactions.result = ?', 'success')
+    .sum('invoice_items.unit_price * invoice_items.quantity')
+  end
 end
